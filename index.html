@@ -8604,8 +8604,21 @@ var _user$project$GameOfLife_Types$Stop = {ctor: 'Stop'};
 var _user$project$GameOfLife_Types$Start = {ctor: 'Start'};
 var _user$project$GameOfLife_Types$Step = {ctor: 'Step'};
 var _user$project$GameOfLife_Types$NoOp = {ctor: 'NoOp'};
+var _user$project$GameOfLife_Types$Infinite = {ctor: 'Infinite'};
 var _user$project$GameOfLife_Types$Gosper = {ctor: 'Gosper'};
 var _user$project$GameOfLife_Types$Flicker = {ctor: 'Flicker'};
+var _user$project$GameOfLife_Patterns$infinite = _elm_lang$core$Native_List.fromArray(
+	[
+		{ctor: '_Tuple2', _0: 7, _1: 1},
+		{ctor: '_Tuple2', _0: 5, _1: 2},
+		{ctor: '_Tuple2', _0: 7, _1: 2},
+		{ctor: '_Tuple2', _0: 8, _1: 2},
+		{ctor: '_Tuple2', _0: 5, _1: 3},
+		{ctor: '_Tuple2', _0: 5, _1: 4},
+		{ctor: '_Tuple2', _0: 3, _1: 5},
+		{ctor: '_Tuple2', _0: 1, _1: 6},
+		{ctor: '_Tuple2', _0: 3, _1: 6}
+	]);
 var _user$project$GameOfLife_Patterns$gosperGun = _elm_lang$core$Native_List.fromArray(
 	[
 		{ctor: '_Tuple2', _0: 1, _1: 5},
@@ -8767,10 +8780,13 @@ var _user$project$GameOfLife_Logic$switchToPattern = F2(
 	function (pattern, model) {
 		var newPattern = function () {
 			var _p8 = pattern;
-			if (_p8.ctor === 'Flicker') {
-				return _user$project$GameOfLife_Patterns$flicker;
-			} else {
-				return _user$project$GameOfLife_Patterns$gosperGun;
+			switch (_p8.ctor) {
+				case 'Flicker':
+					return _user$project$GameOfLife_Patterns$flicker;
+				case 'Gosper':
+					return _user$project$GameOfLife_Patterns$gosperGun;
+				default:
+					return _user$project$GameOfLife_Patterns$infinite;
 			}
 		}();
 		return _elm_lang$core$Native_Utils.update(
@@ -8896,6 +8912,17 @@ var _user$project$Main$view = function (model) {
 				_elm_lang$core$Native_List.fromArray(
 					[
 						_elm_lang$html$Html$text('Switch to a flicker pattern')
+					])),
+				A2(
+				_elm_lang$html$Html$button,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Events$onClick(
+						_user$project$GameOfLife_Types$UsePattern(_user$project$GameOfLife_Types$Infinite))
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html$text('Switch to an infinite pattern')
 					])),
 				_elm_lang$html$Html$text(
 				A2(_elm_lang$core$Basics_ops['++'], 'Generation: ', generation)),

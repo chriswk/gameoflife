@@ -2,7 +2,7 @@ module GameOfLife.Logic exposing (next, cellGenerator, switchToPattern, addCellF
 
 import List exposing (filter, length, member, head, tail)
 import GameOfLife.Types exposing (Cell, Cells, Model, Pattern(..))
-import GameOfLife.Patterns exposing (flicker, gosperGun)
+import GameOfLife.Patterns exposing (flicker, gosperGun, infinite)
 import Random exposing (int, pair, Generator)
 import Mouse exposing (Position)
 
@@ -14,7 +14,7 @@ addCellFromClick position model =
             position.x // 63
 
         cy =
-            (position.y - 25) // 63
+            (position.y - 75) // 63
 
         newCell =
             ( cx, cy )
@@ -35,6 +35,9 @@ switchToPattern pattern model =
 
                 Gosper ->
                     gosperGun
+
+                Infinite ->
+                    infinite
     in
         { model | cells = newPattern, playing = False, generation = 0 }
 

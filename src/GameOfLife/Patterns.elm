@@ -1,4 +1,4 @@
-module GameOfLife.Patterns exposing (flicker, gosperGun)
+module GameOfLife.Patterns exposing (..)
 
 import GameOfLife.Types exposing (Cells)
 
@@ -46,4 +46,19 @@ gosperGun =
     , ( 25, 1 )
     , ( 25, 6 )
     , ( 25, 7 )
+    ]
+
+
+infinite : Cells
+infinite =
+    [ ( 7, 6 )
+    , ( 5, 7 )
+    , ( 7, 7 )
+    , ( 8, 7 )
+    , ( 5, 8 )
+    , ( 7, 8 )
+    , ( 5, 9 )
+    , ( 3, 10 )
+    , ( 1, 11 )
+    , ( 3, 11 )
     ]

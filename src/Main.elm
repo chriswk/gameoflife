@@ -21,7 +21,7 @@ updatePosition pos model =
 
 initialModel : Model
 initialModel =
-    { cells = flicker, generation = 0, playing = False, mousePos = Position 0 0 }
+    { cells = flicker, generation = 0, playing = False, mousePos = Position 0 0, generationDuration = 200 }
 
 
 init : ( Model, Cmd Msg )
@@ -90,11 +90,25 @@ update msg model =
             in
                 ( newModel, Cmd.none )
 
+        IncreaseDuration amount ->
+            let
+                newDuration =
+                    model.generationDuration + amount
+            in
+                ( { model | generationDuration = newDuration }, Cmd.none )
+
+        DecreaseDuration amount ->
+            let
+                newDuration =
+                    model.generationDuration - amount
+            in
+                ( { model | generationDuration = newDuration }, Cmd.none )
+
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
     if model.playing == True then
-        Time.every (200 * millisecond) Tick
+        Time.every (model.generationDuration * millisecond) Tick
     else
         Sub.batch
             [ Mouse.clicks Click
@@ -116,6 +130,9 @@ view model =
 
         pos =
             toString model.mousePos
+
+        duration =
+            (toString model.generationDuration) ++ " ms"
     in
         div [ class "container" ]
             [ button [ onClick Step ] [ text "Next Generation" ]
@@ -124,9 +141,13 @@ view model =
             , button [ onClick Add ] [ text "Add a cell" ]
             , button [ onClick (UsePattern Gosper) ] [ text "Switch to GosperGun" ]
             , button [ onClick (UsePattern Flicker) ] [ text "Switch to a flicker pattern" ]
-            , text ("Generation: " ++ generation)
-            , text ("Survivors: " ++ survivors)
-            , text ("Position: " ++ pos)
+            , button [ onClick (UsePattern Infinite) ] [ text "Switch to an infinite pattern" ]
+            , button [ onClick (IncreaseDuration 50) ] [ text "Increase generation duration with 50 ms" ]
+            , button [ onClick (DecreaseDuration 30) ] [ text "Decrease generation duration with 30 ms" ]
+            , div [] [ text ("Generation duration: " ++ duration) ]
+            , div [] [ text ("Generation: " ++ generation) ]
+            , div [] [ text ("Survivors: " ++ survivors) ]
+            , div [] [ text ("Position: " ++ pos) ]
             , (renderCells model.cells)
             ]
 

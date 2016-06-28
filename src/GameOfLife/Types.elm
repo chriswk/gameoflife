@@ -23,11 +23,14 @@ type Msg
     | UsePattern Pattern
     | Click Position
     | Move Position
+    | IncreaseDuration Float
+    | DecreaseDuration Float
 
 
 type Pattern
     = Flicker
     | Gosper
+    | Infinite
 
 
 type alias Model =
@@ -35,4 +38,5 @@ type alias Model =
     , generation : Int
     , playing : Bool
     , mousePos : Position
+    , generationDuration : Float
     }
