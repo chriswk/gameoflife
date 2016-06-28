@@ -1,6 +1,7 @@
 module GameOfLife.Types exposing (..)
 
 import Time exposing (Time)
+import Mouse exposing (Position)
 
 
 type alias Cell =
@@ -20,6 +21,8 @@ type Msg
     | Add
     | NewCell Cell
     | UsePattern Pattern
+    | Click Position
+    | Move Position
 
 
 type Pattern
@@ -31,4 +34,5 @@ type alias Model =
     { cells : Cells
     , generation : Int
     , playing : Bool
+    , mousePos : Position
     }

@@ -5,17 +5,23 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import GameOfLife.Types exposing (Model, Msg(..), Pattern(..))
 import GameOfLife.Patterns exposing (..)
-import GameOfLife.Logic exposing (next, cellGenerator, switchToPattern)
+import GameOfLife.Logic exposing (next, cellGenerator, switchToPattern, addCellFromClick)
 import GameOfLife.Renderer exposing (renderCells)
 import Html.Events exposing (onClick)
 import List exposing (length)
 import Time exposing (every, second, millisecond)
 import Random exposing (generate)
+import Mouse exposing (clicks, Position, moves)
+
+
+updatePosition : Position -> Model -> Model
+updatePosition pos model =
+    { model | mousePos = pos }
 
 
 initialModel : Model
 initialModel =
-    { cells = flicker, generation = 0, playing = False }
+    { cells = flicker, generation = 0, playing = False, mousePos = Position 0 0 }
 
 
 init : ( Model, Cmd Msg )
@@ -70,13 +76,30 @@ update msg model =
             in
                 ( newModel, Cmd.none )
 
+        Click position ->
+            let
+                newModel =
+                    addCellFromClick position model
+            in
+                ( newModel, Cmd.none )
+
+        Move pos ->
+            let
+                newModel =
+                    updatePosition pos model
+            in
+                ( newModel, Cmd.none )
+
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
     if model.playing == True then
         Time.every (200 * millisecond) Tick
     else
-        Sub.none
+        Sub.batch
+            [ Mouse.clicks Click
+            , Mouse.moves Move
+            ]
 
 
 view : Model -> Html Msg
@@ -90,6 +113,9 @@ view model =
 
         survivors =
             toString (length model.cells)
+
+        pos =
+            toString model.mousePos
     in
         div [ class "container" ]
             [ button [ onClick Step ] [ text "Next Generation" ]
@@ -100,6 +126,7 @@ view model =
             , button [ onClick (UsePattern Flicker) ] [ text "Switch to a flicker pattern" ]
             , text ("Generation: " ++ generation)
             , text ("Survivors: " ++ survivors)
+            , text ("Position: " ++ pos)
             , (renderCells model.cells)
             ]
 

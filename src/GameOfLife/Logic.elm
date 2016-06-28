@@ -1,9 +1,28 @@
-module GameOfLife.Logic exposing (next, cellGenerator, switchToPattern)
+module GameOfLife.Logic exposing (next, cellGenerator, switchToPattern, addCellFromClick)
 
 import List exposing (filter, length, member, head, tail)
 import GameOfLife.Types exposing (Cell, Cells, Model, Pattern(..))
 import GameOfLife.Patterns exposing (flicker, gosperGun)
 import Random exposing (int, pair, Generator)
+import Mouse exposing (Position)
+
+
+addCellFromClick : Position -> Model -> Model
+addCellFromClick position model =
+    let
+        cx =
+            position.x // 63
+
+        cy =
+            (position.y - 25) // 63
+
+        newCell =
+            ( cx, cy )
+
+        newCells =
+            newCell :: model.cells
+    in
+        { model | cells = newCells }
 
 
 switchToPattern : Pattern -> Model -> Model
@@ -83,8 +102,23 @@ survive livingCells cell =
     let
         liveNeighboursCount =
             length (liveNeighbours cell livingCells)
+
+        ( cx, cy ) =
+            cell
+
+        isInsideX =
+            cx < 1800 && cx > -1
+
+        isInsideY =
+            cy < 1200 && cy > -1
+
+        notTouchingFence =
+            isInsideX && isInsideY
+
+        conditionsRight =
+            liveNeighboursCount == 2 || liveNeighboursCount == 3
     in
-        liveNeighboursCount == 2 || liveNeighboursCount == 3
+        notTouchingFence && conditionsRight
 
 
 liveNeighbours : Cell -> Cells -> Cells
