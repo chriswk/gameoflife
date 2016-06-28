@@ -7,11 +7,12 @@ import GameOfLife.Types exposing (Model, Msg(..), Pattern(..))
 import GameOfLife.Patterns exposing (..)
 import GameOfLife.Logic exposing (next, cellGenerator, switchToPattern, addCellFromClick)
 import GameOfLife.Renderer exposing (renderCells)
-import Html.Events exposing (onClick)
+import Html.Events exposing (onClick, onInput)
 import List exposing (length)
 import Time exposing (every, second, millisecond)
 import Random exposing (generate)
 import Mouse exposing (clicks, Position, moves)
+import String exposing (toFloat)
 
 
 updatePosition : Position -> Model -> Model
@@ -100,7 +101,17 @@ update msg model =
         DecreaseDuration amount ->
             let
                 newDuration =
-                    model.generationDuration - amount
+                    Basics.max (model.generationDuration - amount) 15
+            in
+                ( { model | generationDuration = newDuration }, Cmd.none )
+
+        SetDuration time ->
+            let
+                duration =
+                    Result.withDefault 200 (String.toFloat time)
+
+                newDuration =
+                    Basics.max duration 15
             in
                 ( { model | generationDuration = newDuration }, Cmd.none )
 
@@ -144,6 +155,7 @@ view model =
             , button [ onClick (UsePattern Infinite) ] [ text "Switch to an infinite pattern" ]
             , button [ onClick (IncreaseDuration 50) ] [ text "Increase generation duration with 50 ms" ]
             , button [ onClick (DecreaseDuration 30) ] [ text "Decrease generation duration with 30 ms" ]
+            , input [ placeholder "Time in milliseconds", Html.Attributes.min "20", Html.Attributes.max "5000", onInput SetDuration ] []
             , div [] [ text ("Generation duration: " ++ duration) ]
             , div [] [ text ("Generation: " ++ generation) ]
             , div [] [ text ("Survivors: " ++ survivors) ]

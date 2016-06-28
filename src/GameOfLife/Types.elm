@@ -25,6 +25,7 @@ type Msg
     | Move Position
     | IncreaseDuration Float
     | DecreaseDuration Float
+    | SetDuration String
 
 
 type Pattern

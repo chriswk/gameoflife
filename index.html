@@ -8584,6 +8584,9 @@ var _user$project$GameOfLife_Types$Model = F5(
 	function (a, b, c, d, e) {
 		return {cells: a, generation: b, playing: c, mousePos: d, generationDuration: e};
 	});
+var _user$project$GameOfLife_Types$SetDuration = function (a) {
+	return {ctor: 'SetDuration', _0: a};
+};
 var _user$project$GameOfLife_Types$DecreaseDuration = function (a) {
 	return {ctor: 'DecreaseDuration', _0: a};
 };
@@ -8958,6 +8961,17 @@ var _user$project$Main$view = function (model) {
 						_elm_lang$html$Html$text('Decrease generation duration with 30 ms')
 					])),
 				A2(
+				_elm_lang$html$Html$input,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$placeholder('Time in milliseconds'),
+						_elm_lang$html$Html_Attributes$min('20'),
+						_elm_lang$html$Html_Attributes$max('5000'),
+						_elm_lang$html$Html_Events$onInput(_user$project$GameOfLife_Types$SetDuration)
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[])),
+				A2(
 				_elm_lang$html$Html$div,
 				_elm_lang$core$Native_List.fromArray(
 					[]),
@@ -9092,8 +9106,21 @@ var _user$project$Main$update = F2(
 						{generationDuration: newDuration}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
+			case 'DecreaseDuration':
+				var newDuration = A2(_elm_lang$core$Basics$max, model.generationDuration - _p0._0, 15);
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{generationDuration: newDuration}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
 			default:
-				var newDuration = model.generationDuration - _p0._0;
+				var duration = A2(
+					_elm_lang$core$Result$withDefault,
+					200,
+					_elm_lang$core$String$toFloat(_p0._0));
+				var newDuration = A2(_elm_lang$core$Basics$max, duration, 15);
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
