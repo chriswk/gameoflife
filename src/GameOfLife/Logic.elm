@@ -1,68 +1,105 @@
-module GameOfLife.Logic exposing (next, cellGenerator)
+module GameOfLife.Logic exposing (next, cellGenerator, switchToPattern)
 
 import List exposing (filter, length, member, head, tail)
-import GameOfLife.Types exposing (Cell, Cells)
+import GameOfLife.Types exposing (Cell, Cells, Model, Pattern(..))
+import GameOfLife.Patterns exposing (flicker, gosperGun)
 import Random exposing (int, pair, Generator)
 
 
-cellGenerator : Generator (Int, Int)
+switchToPattern : Pattern -> Model -> Model
+switchToPattern pattern model =
+    let
+        newPattern =
+            case pattern of
+                Flicker ->
+                    flicker
+
+                Gosper ->
+                    gosperGun
+    in
+        { model | cells = newPattern, playing = False }
+
+
+cellGenerator : Generator ( Int, Int )
 cellGenerator =
-  pair (int 0 30) (int 0 30)
+    pair (int 0 30) (int 0 30)
+
 
 next : Cells -> Cells
 next livingCells =
-  (survivors livingCells) ++ (unique (newBorns livingCells))
+    (survivors livingCells) ++ (unique (newBorns livingCells))
+
 
 unique : Cells -> Cells
 unique cells =
-  case cells of
-    (h :: t) -> if member h t then unique t else h :: unique t
-    [] -> []
+    case cells of
+        h :: t ->
+            if member h t then
+                unique t
+            else
+                h :: unique t
+
+        [] ->
+            []
+
 
 newBorns : Cells -> Cells
 newBorns livingCells =
-  List.concatMap (newBornsFor livingCells) livingCells
+    List.concatMap (newBornsFor livingCells) livingCells
+
 
 newBornsFor : Cells -> Cell -> Cells
 newBornsFor livingCells cell =
-  filter (isBorn livingCells) (deadNeighbours cell livingCells)
+    filter (isBorn livingCells) (deadNeighbours cell livingCells)
+
 
 isBorn : Cells -> Cell -> Bool
 isBorn livingCells cell =
-  length (liveNeighbours cell livingCells) == 3
+    length (liveNeighbours cell livingCells) == 3
+
 
 deadNeighbours : Cell -> Cells -> Cells
 deadNeighbours cell livingCells =
-  filter (isDead livingCells) (neighbours cell)
+    filter (isDead livingCells) (neighbours cell)
+
 
 isAlive : Cells -> Cell -> Bool
 isAlive livingCells cell =
-  member cell livingCells
+    member cell livingCells
+
 
 isDead : Cells -> Cell -> Bool
 isDead livingCells cell =
-  not (isAlive livingCells cell)
+    not (isAlive livingCells cell)
+
 
 survivors : Cells -> Cells
 survivors livingCells =
-  filter (survive livingCells) livingCells
+    filter (survive livingCells) livingCells
+
 
 survive : Cells -> Cell -> Bool
 survive livingCells cell =
-  let liveNeighboursCount = length (liveNeighbours cell livingCells)
-  in liveNeighboursCount == 2 || liveNeighboursCount == 3
+    let
+        liveNeighboursCount =
+            length (liveNeighbours cell livingCells)
+    in
+        liveNeighboursCount == 2 || liveNeighboursCount == 3
+
 
 liveNeighbours : Cell -> Cells -> Cells
 liveNeighbours cell livingCells =
-  filter (isAlive livingCells) (neighbours cell)
+    filter (isAlive livingCells) (neighbours cell)
+
 
 neighbours : Cell -> Cells
-neighbours (fst, snd) = [ ((fst - 1), (snd - 1))
-                        , (fst, (snd - 1))
-                        , ((fst + 1), (snd - 1))
-                        , ((fst - 1), snd)
-                        , ((fst + 1), snd)
-                        , ((fst - 1), (snd + 1))
-                        , (fst, (snd + 1))
-                        , ((fst + 1), (snd + 1))
-                        ]
+neighbours ( fst, snd ) =
+    [ ( (fst - 1), (snd - 1) )
+    , ( fst, (snd - 1) )
+    , ( (fst + 1), (snd - 1) )
+    , ( (fst - 1), snd )
+    , ( (fst + 1), snd )
+    , ( (fst - 1), (snd + 1) )
+    , ( fst, (snd + 1) )
+    , ( (fst + 1), (snd + 1) )
+    ]
