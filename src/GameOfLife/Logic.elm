@@ -17,7 +17,7 @@ switchToPattern pattern model =
                 Gosper ->
                     gosperGun
     in
-        { model | cells = newPattern, playing = False }
+        { model | cells = newPattern, playing = False, generation = 0 }
 
 
 cellGenerator : Generator ( Int, Int )
