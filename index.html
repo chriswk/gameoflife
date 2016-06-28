@@ -8580,10 +8580,16 @@ var _elm_lang$svg$Svg_Attributes$additive = _elm_lang$virtual_dom$VirtualDom$att
 var _elm_lang$svg$Svg_Attributes$accumulate = _elm_lang$virtual_dom$VirtualDom$attribute('accumulate');
 var _elm_lang$svg$Svg_Attributes$accelerate = _elm_lang$virtual_dom$VirtualDom$attribute('accelerate');
 var _elm_lang$svg$Svg_Attributes$accentHeight = _elm_lang$virtual_dom$VirtualDom$attribute('accent-height');
-var _user$project$GameOfLife_Types$Model = F4(
-	function (a, b, c, d) {
-		return {cells: a, generation: b, playing: c, mousePos: d};
+var _user$project$GameOfLife_Types$Model = F5(
+	function (a, b, c, d, e) {
+		return {cells: a, generation: b, playing: c, mousePos: d, generationDuration: e};
 	});
+var _user$project$GameOfLife_Types$DecreaseDuration = function (a) {
+	return {ctor: 'DecreaseDuration', _0: a};
+};
+var _user$project$GameOfLife_Types$IncreaseDuration = function (a) {
+	return {ctor: 'IncreaseDuration', _0: a};
+};
 var _user$project$GameOfLife_Types$Move = function (a) {
 	return {ctor: 'Move', _0: a};
 };
@@ -8609,15 +8615,16 @@ var _user$project$GameOfLife_Types$Gosper = {ctor: 'Gosper'};
 var _user$project$GameOfLife_Types$Flicker = {ctor: 'Flicker'};
 var _user$project$GameOfLife_Patterns$infinite = _elm_lang$core$Native_List.fromArray(
 	[
-		{ctor: '_Tuple2', _0: 7, _1: 1},
-		{ctor: '_Tuple2', _0: 5, _1: 2},
-		{ctor: '_Tuple2', _0: 7, _1: 2},
-		{ctor: '_Tuple2', _0: 8, _1: 2},
-		{ctor: '_Tuple2', _0: 5, _1: 3},
-		{ctor: '_Tuple2', _0: 5, _1: 4},
-		{ctor: '_Tuple2', _0: 3, _1: 5},
-		{ctor: '_Tuple2', _0: 1, _1: 6},
-		{ctor: '_Tuple2', _0: 3, _1: 6}
+		{ctor: '_Tuple2', _0: 7, _1: 6},
+		{ctor: '_Tuple2', _0: 5, _1: 7},
+		{ctor: '_Tuple2', _0: 7, _1: 7},
+		{ctor: '_Tuple2', _0: 8, _1: 7},
+		{ctor: '_Tuple2', _0: 5, _1: 8},
+		{ctor: '_Tuple2', _0: 7, _1: 8},
+		{ctor: '_Tuple2', _0: 5, _1: 9},
+		{ctor: '_Tuple2', _0: 3, _1: 10},
+		{ctor: '_Tuple2', _0: 1, _1: 11},
+		{ctor: '_Tuple2', _0: 3, _1: 11}
 	]);
 var _user$project$GameOfLife_Patterns$gosperGun = _elm_lang$core$Native_List.fromArray(
 	[
@@ -8795,7 +8802,7 @@ var _user$project$GameOfLife_Logic$switchToPattern = F2(
 	});
 var _user$project$GameOfLife_Logic$addCellFromClick = F2(
 	function (position, model) {
-		var cy = ((position.y - 25) / 63) | 0;
+		var cy = ((position.y - 75) / 63) | 0;
 		var cx = (position.x / 63) | 0;
 		var newCell = {ctor: '_Tuple2', _0: cx, _1: cy};
 		var newCells = A2(_elm_lang$core$List_ops['::'], newCell, model.cells);
@@ -8838,6 +8845,10 @@ var _user$project$GameOfLife_Renderer$renderCells = function (cells) {
 		A2(_elm_lang$core$List$map, _user$project$GameOfLife_Renderer$renderCell, cells));
 };
 var _user$project$Main$view = function (model) {
+	var duration = A2(
+		_elm_lang$core$Basics_ops['++'],
+		_elm_lang$core$Basics$toString(model.generationDuration),
+		' ms');
 	var pos = _elm_lang$core$Basics$toString(model.mousePos);
 	var survivors = _elm_lang$core$Basics$toString(
 		_elm_lang$core$List$length(model.cells));
@@ -8924,17 +8935,69 @@ var _user$project$Main$view = function (model) {
 					[
 						_elm_lang$html$Html$text('Switch to an infinite pattern')
 					])),
-				_elm_lang$html$Html$text(
-				A2(_elm_lang$core$Basics_ops['++'], 'Generation: ', generation)),
-				_elm_lang$html$Html$text(
-				A2(_elm_lang$core$Basics_ops['++'], 'Survivors: ', survivors)),
-				_elm_lang$html$Html$text(
-				A2(_elm_lang$core$Basics_ops['++'], 'Position: ', pos)),
+				A2(
+				_elm_lang$html$Html$button,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Events$onClick(
+						_user$project$GameOfLife_Types$IncreaseDuration(50))
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html$text('Increase generation duration with 50 ms')
+					])),
+				A2(
+				_elm_lang$html$Html$button,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Events$onClick(
+						_user$project$GameOfLife_Types$DecreaseDuration(30))
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html$text('Decrease generation duration with 30 ms')
+					])),
+				A2(
+				_elm_lang$html$Html$div,
+				_elm_lang$core$Native_List.fromArray(
+					[]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html$text(
+						A2(_elm_lang$core$Basics_ops['++'], 'Generation duration: ', duration))
+					])),
+				A2(
+				_elm_lang$html$Html$div,
+				_elm_lang$core$Native_List.fromArray(
+					[]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html$text(
+						A2(_elm_lang$core$Basics_ops['++'], 'Generation: ', generation))
+					])),
+				A2(
+				_elm_lang$html$Html$div,
+				_elm_lang$core$Native_List.fromArray(
+					[]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html$text(
+						A2(_elm_lang$core$Basics_ops['++'], 'Survivors: ', survivors))
+					])),
+				A2(
+				_elm_lang$html$Html$div,
+				_elm_lang$core$Native_List.fromArray(
+					[]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html$text(
+						A2(_elm_lang$core$Basics_ops['++'], 'Position: ', pos))
+					])),
 				_user$project$GameOfLife_Renderer$renderCells(model.cells)
 			]));
 };
 var _user$project$Main$subscriptions = function (model) {
-	return _elm_lang$core$Native_Utils.eq(model.playing, true) ? A2(_elm_lang$core$Time$every, 200 * _elm_lang$core$Time$millisecond, _user$project$GameOfLife_Types$Tick) : _elm_lang$core$Platform_Sub$batch(
+	return _elm_lang$core$Native_Utils.eq(model.playing, true) ? A2(_elm_lang$core$Time$every, model.generationDuration * _elm_lang$core$Time$millisecond, _user$project$GameOfLife_Types$Tick) : _elm_lang$core$Platform_Sub$batch(
 		_elm_lang$core$Native_List.fromArray(
 			[
 				_elm_lang$mouse$Mouse$clicks(_user$project$GameOfLife_Types$Click),
@@ -8952,7 +9015,8 @@ var _user$project$Main$initialModel = {
 	cells: _user$project$GameOfLife_Patterns$flicker,
 	generation: 0,
 	playing: false,
-	mousePos: A2(_elm_lang$mouse$Mouse$Position, 0, 0)
+	mousePos: A2(_elm_lang$mouse$Mouse$Position, 0, 0),
+	generationDuration: 200
 };
 var _user$project$Main$init = {ctor: '_Tuple2', _0: _user$project$Main$initialModel, _1: _elm_lang$core$Platform_Cmd$none};
 var _user$project$Main$updatePosition = F2(
@@ -9016,9 +9080,27 @@ var _user$project$Main$update = F2(
 			case 'Click':
 				var newModel = A2(_user$project$GameOfLife_Logic$addCellFromClick, _p0._0, model);
 				return {ctor: '_Tuple2', _0: newModel, _1: _elm_lang$core$Platform_Cmd$none};
-			default:
+			case 'Move':
 				var newModel = A2(_user$project$Main$updatePosition, _p0._0, model);
 				return {ctor: '_Tuple2', _0: newModel, _1: _elm_lang$core$Platform_Cmd$none};
+			case 'IncreaseDuration':
+				var newDuration = model.generationDuration + _p0._0;
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{generationDuration: newDuration}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			default:
+				var newDuration = model.generationDuration - _p0._0;
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{generationDuration: newDuration}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
 		}
 	});
 var _user$project$Main$main = {
