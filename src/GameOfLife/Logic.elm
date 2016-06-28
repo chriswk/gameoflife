@@ -14,7 +14,7 @@ addCellFromClick position model =
             position.x // 63
 
         cy =
-            (position.y - 75) // 63
+            (position.y - 90) // 63
 
         newCell =
             ( cx, cy )
